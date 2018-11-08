@@ -1,0 +1,196 @@
+
+  <h2 class="">ABC GUIAS</h2>
+
+<div class="row">
+  <div class="col-xs-6 col-sm-6 col-md-6 col-sm-offset-1 col-md-offset 2">
+    <br>
+    
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <input type="hidden" id="id" formControlName="id">
+          <label class="" for="nombre">Nombre(s)</label>
+          <input type="text" class="form-control" id="nombre" formControlName="nombre">
+        </div>
+      
+     
+          <div class="form-group col-md-6">
+            <label class="" for="apellido">Apellido(s)</label>
+            <input type="text" class="form-control" id="apellido" formControlName="apellido">
+          </div>
+        </div>
+       <div class="form-row">
+            <div class="form-group col-md-6">
+              <label class="" for="email">Email</label>
+              <input type="text" class="form-control" id="email" formControlName="email">
+              </div>
+              <div class="form-group col-md-6">
+                  <label class="" for="telefono">Teléfono</label>
+                  <input type="text" class="form-control" id="telefono" formControlName="telefono">
+                </div>
+       </div>
+              <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label class="" for="fecha_naciemiento">Fecha de nacimiento</label>
+                    <input type="date" class="form-control" id="fecha_nacimiento" formControlName="fecha_nacimiento">
+                  </div>
+                
+                  <div class="form-group col-md-6">
+                  <label class="color-text">Sexo</label>
+                    <select class="form-control"  formControlName="sexo">
+                        <option  value="M">Masculino</option>
+                        <option  value="F">Femenino</option>
+                  </select>
+                  </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="color-text">País</label>
+                            <select class="form-control"  formControlName="id_pais">
+                               <option *ngFor="let pais of paises" [value]="pais.id">{{pais.nombre}}</option>
+                           </select>
+                          </div>
+    
+                      
+                        <div class="form-group col-md-6">
+                        <label class="color-text">Disponibilidad</label>
+                          <select class="form-control"  formControlName="disponibilidad">
+                              <option value="A">Activo</option>
+                              <option value="I">Inactivo</option>
+                              <option value="R">En recorrido</option>
+                        </select>
+                        </div>
+
+                        <input type="file" accept="image/*" (change)="changeListener($event)" >
+                        <img *ngIf="image" [src]="image"/> 
+                        <input type="hidden" id="foto" formControlName="foto" [value]="image">
+
+                          </div>
+      <br>
+      <div class="form-group">
+          <button [disabled]="!form.valid" type="submit" class="btn btn-outline-primary btn-lg">Guardar</button>
+          <button type="button"(click)="resetForm(form);" class="btn btn-lg  btn-outline-warning float-right">Limpiar</button>
+        </div>
+        <br>
+        <br>
+      
+            <div *ngIf="mensaje" class="alert form-group col-md-4 float-right" [ngClass]="{'alert-success': error==0, 'alert-danger': error==1 }"role="alert">
+                {{mensaje}}
+              </div>
+          
+    </form>
+  </div>
+ 
+  <div class="col-xs-6 col-sm-6 col-md-6 col-sm-offset-1 col-md-offset 2">
+      <br>
+
+      
+      <div class="table-responsive">   
+          <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Teléfono</th>
+                  <th scope="col">Fecha de nacimiento</th>
+                  <th scope="col">Sexo</th>
+                  <th scope="col">Disponibilidad</th>
+                  <th scope="col">idiomas</th>
+                  
+            
+                  <th scope="col">Titulos</th>
+                  <th scope="col">Lugares</th>
+                  <th scope="col">Acción</th>
+                </tr>
+              </thead>
+              <tbody *ngIf="guias!=undefined">
+                <tr  *ngFor="let guia of guias.Guias" >
+                  <th scope="row">{{guia.nombre}} {{guia.apellido}}</th>
+                  <td>{{guia.email}}</td>
+                  <td>{{guia.telefono}} </td>
+                  <td>{{calculateAge(guia.fecha_nacimiento)}}</td>
+                  <td>{{convertirSexo(guia.sexo)}}</td>
+                  <td>{{convertirDisponibilidad(guia.disponibilidad)}}</td>
+                  <td><button  class="btn btn-primary" (click)="getIdiomas();openVerticallyCentered(content,1,guia.id)"><i class="material-icons">add</i></button></td>
+                  <td><button  class="btn btn-danger" (click)="getTitulos();openVerticallyCentered(content,2,guia.id)"><i class="material-icons">add</i></button></td>
+                
+                  <td><button  class="btn btn-info" (click)="getLugares();openVerticallyCentered(content,3,guia.id)"><i class="material-icons">add</i></button></td>
+                  <td><button (click)="editGuia(guia)" class="btn btn-warning"><i class="material-icons">edit</i></button></td>
+                </tr>
+                
+              
+              </tbody>
+            </table>
+            </div>
+    </div>
+  
+</div>
+
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 *ngIf="boton==1"class="modal-title">Idiomas</h4>
+      <h4 *ngIf="boton==2"class="modal-title">Titulos</h4>
+      <h4 *ngIf="boton==3"class="modal-title">Lugares</h4>
+  
+      <h4 *ngIf="boton==4"class="modal-title">Titulos</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+     <div *ngIf="boton==1">
+       <div class="form-row">
+        <div class="form-group col-md-6">
+            
+              <select *ngIf="idiomas" class="form-control form-control-lg " size="2"  [(ngModel)]="idiomaSelect" >
+                  <option  *ngFor="let idioma of idiomas.Idiomas" [value]="idioma.id">{{idioma.nombre}}</option>
+            </select>
+            </div>
+            <div class="form-group col-md-6">
+                <button type="button" class="btn btn-success " (click)="insertarIdiomaGuia(id_guia)"><i class="material-icons">add</i></button>
+                <button type="button" class="btn btn-danger " (click)="deleteIdiomaGuia(id_guia)"><i class="material-icons" >delete</i></button>
+
+                </div>
+              </div>
+              <p>{{mensajeIdioma}}</p>
+     </div>
+     <div *ngIf="boton==2">
+        <div class="form-row">
+         <div class="form-group col-md-6">
+             
+               <select *ngIf="titulos" class="form-control form-control-lg " size="2"  [(ngModel)]="titulosSelect" >
+                   <option  *ngFor="let titulo of titulos.Titulos" [value]="titulo.id">{{titulo.nombre}}</option>
+             </select>
+             </div>
+             <div class="form-group col-md-6">
+                 <button type="button" class="btn btn-success " (click)="insertarTituloGuia(id_guia)"><i class="material-icons">add</i></button>
+                 <button type="button" class="btn btn-danger " (click)="deleteTituloGuia(id_guia)"><i class="material-icons" >delete</i></button>
+ 
+                 </div>
+               </div>
+               <p>{{mensajeTitulo}}</p>
+      </div>
+
+      <div *ngIf="boton==3">
+          <div class="form-row">
+           <div class="form-group col-md-6">
+               
+                 <select *ngIf="lugares" class="form-control form-control-lg " size="2"  [(ngModel)]="lugarSelect" >
+                     <option  *ngFor="let lugar of lugares.Lugares" [value]="lugar.id">{{lugar.nombre}}</option>
+               </select>
+               </div>
+               <div class="form-group col-md-6">
+                   <button type="button" class="btn btn-success " (click)="insertarLugarGuia(id_guia)"><i class="material-icons">add</i></button>
+                   <button type="button" class="btn btn-danger " (click)="deleteLugarGuia(id_guia)"><i class="material-icons" >delete</i></button>
+   
+                   </div>
+                 </div>
+                 <p>{{mensajeLugar}}</p>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+    </div>
+  </ng-template>
