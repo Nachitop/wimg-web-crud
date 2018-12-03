@@ -67,4 +67,11 @@ export class GuiaService {
     
     return this.http.post('http://35.185.216.89/deleteGuiaLugar.php',lugar);
   }
+  valorarGuia(valoracion:any){
+    return this.http.post("http://35.185.216.89/setValoraciones.php",valoracion);
+  }
+
+  setLoginGuia(login:any){
+    return this.http.post("http://35.185.216.89/setLoginGuia.php",login);
+  }
 }

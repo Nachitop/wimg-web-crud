@@ -7,7 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap'; //modal de bootstrap
 import { Idioma1 } from 'src/app/models/idioma.model';
 import { Titulo1 } from 'src/app/models/titulo.model';
 import { Lugar1 } from 'src/app/models/lugar.model';
-import { async } from 'rxjs/internal/scheduler/async';
+
 
 @Component({
   selector: 'app-crudguia',
@@ -74,11 +74,27 @@ export class CrudguiaComponent implements OnInit {
     var id;
     id=this.form.get('id').value;
     this.form.patchValue({foto:this.image})
-    
+    let email=this.form.get('email').value;
     if(id==""|| id==null || id==undefined){
-    //delete this.form.controls['id'];
+   
    
     this.guiaService.createGuia(this.form.value).subscribe (async res=>{
+      let resp=JSON.stringify(res);
+      let resp2=JSON.parse(resp);
+      var valoracion={
+        id_turista:9, id_guia:resp2.mensaje.id, valoracion:5
+      }
+      this.guiaService.valorarGuia(valoracion).subscribe(res=>{
+
+      });
+     
+      console.log( email);
+      var login_guia={
+        email: email, password:'123456',estado:"1"
+      };
+      this.guiaService.setLoginGuia(login_guia).subscribe(res=>{
+        console.log(res);
+      });
       this.mostrarMensaje(res,"Guardado correctamente","Ha ocurrido un problema al guardar");
       await  this.ocultarMensaje();
       await this.getGuias();
@@ -86,7 +102,7 @@ export class CrudguiaComponent implements OnInit {
      
     });
   }else{
-    console.log(this.form.value);
+
     this.guiaService.editGuia(this.form.value).subscribe(async res=>{
       this.mostrarMensaje(res,"Actualizado correctamente","Ha ocurrido un problema al actualizar");
      
@@ -161,6 +177,11 @@ convertirDisponibilidad(disponibilidad:string){
     else{
       if(disponibilidad=="R"){
         return "En recorrido"
+      }
+      else{
+        if(disponibilidad=="O"){
+          return "Ocupado"
+        }
       }
     }
   }
